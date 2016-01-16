@@ -75,8 +75,7 @@ def translate(note, baseChar, translateTable):
     numOfNote = int(curNote[0])
     signOfNote = curNote[1:]
 
-    middleCRange = ("C", "D", "E", "F", "G", "A", "B")
-    distanceOfNoteAndBase = numOfNote - middleCRange.index(baseChar) - 1
+    distanceOfNoteAndBase = numOfNote - 1
     baseValueInTranslateTable = valueInTranslateTable(baseChar)
     baseIndexInTranslateTable = translateTable.index(baseValueInTranslateTable)
     offsetBySign = len(signOfNote) * 7
@@ -102,4 +101,7 @@ if __name__ == "__main__":
                 print "Input note should range between 1~7 with several u or d fellowing"
                 print "u means up, d means down, only one of them should occur each time"
                 sys.exit(1)
+    else:
+        print "Invalid arguments"
+        print "Usage: python music.x.py $1=C, $2(simple score)"
 
