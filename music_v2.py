@@ -91,7 +91,11 @@ if __name__ == "__main__":
             print "Base should only be one char within set {C,D,E,F,G,A,B}"
             sys.exit(1)
 
-        simpleScore = sys.argv[2]
+        try:
+            with open(sys.argv[2], 'r') as fstream:
+                simpleScore = fstream.read()
+        except IOError:
+            simpleScore = sys.argv[2]
         noteListOfSimpleScore = splitScore(simpleScore)
         for note in noteListOfSimpleScore:
             if isValidNote(note):

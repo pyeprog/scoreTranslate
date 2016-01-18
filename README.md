@@ -11,3 +11,4 @@ python music\_v2.py [A-G] "simple score"
 
 #Feature
 - Extra space is tolerated 
+- Argument 2 can be string of simple score or the name of a score file with the right format
