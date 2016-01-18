@@ -2,7 +2,7 @@ import sys
 
 def splitScore(simpleScore):
     simpleScore = simpleScore.strip()
-    scoreList = simpleScore.split(' ')
+    scoreList = [note for note in simpleScore.split(' ') if note != '']
     return scoreList
 
 def isValidBase(baseChar):
