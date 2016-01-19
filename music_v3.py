@@ -1,4 +1,3 @@
-import sys
 
 def splitScore(simpleScore):
     simpleScore = simpleScore.strip()
@@ -35,9 +34,9 @@ def isValidNote(note):
         print "Input note should not just contain space or empty"
         return False
     numCharOfNote = curNote[0]
-    if not (numCharOfNote.isdigit() and 1 <= int(numCharOfNote) and \
+    if not (numCharOfNote.isdigit() and 0 <= int(numCharOfNote) and \
             int(numCharOfNote) <= 7):
-        print "The first char of input note", note, "should be digit within range 1~7"
+        print "The first char of input note", note, "should be digit within range 0~7"
         return False
     signOfNote = curNote[1:]
     if len(signOfNote) > 0:
@@ -103,6 +102,9 @@ def translate(note, baseChar, dictOfHalfStepFromBase):
     curNote = note.strip()
     numOfNote = int(curNote[0])
     signOfNote = curNote[1:]
+    
+    if numOfNote == 0:
+        return 0
 
     halfStepsFromBase = dictOfHalfStepFromBase[numOfNote]
     baseValue = valueOfBase(baseChar)
@@ -111,7 +113,27 @@ def translate(note, baseChar, dictOfHalfStepFromBase):
         offsetBySign = -1 * offsetBySign
     return halfStepsFromBase + baseValue + offsetBySign
 
+def mergeSimilarRow(measureLineList):
+    rowGroupList = list()
+    for measureLine in measureLineList:
+        if len(rowGroupList) == 0:
+            group = list()
+            group.append(measureLine)
+            rowGroupList.append(group)
+        else:
+            print "rowGroup", rowGroupList
+            print "measureLine", measureLine
+            if len(rowGroupList[-1][0]) != len(measureLine):
+                group = list()
+                group.append(measureLine)
+                rowGroupList.append(group)
+            else:
+                rowGroupList[-1].append(measureLine)
+    return rowGroupList
+
+
 if __name__ == "__main__":
+    import sys
     if len(sys.argv) == 4:
         baseChar = sys.argv[1]
         if not isValidBase(baseChar):
@@ -129,23 +151,39 @@ if __name__ == "__main__":
                     "mm" : "Mminor" """
             sys.exit(1)
 
+        simpleScoreList = list()
         try:
             with open(sys.argv[3], 'r') as fstream:
-                simpleScore = fstream.read()
+                for eachLine in fstream.readlines():
+                    simpleScoreList.append(eachLine)
         except IOError:
-            simpleScore = sys.argv[3]
+            inputStringScore = sys.argv[3]
+            simpleScoreList = inputStringScore.split('\n')
 
-        noteListOfSimpleScore = splitScore(simpleScore)
         dictOfHalfStepFromBase = getDictOfHalfStepFromBase(scale)
+        scoreLineList = list()
+        for eachScoreLine in simpleScoreList:
+            measureList = list()
+            if eachScoreLine == '\n':
+                continue
+            for simpleScore in eachScoreLine.split('|'):
+                noteListOfSimpleScore = splitScore(simpleScore)
+                noteList = list()
+                for note in noteListOfSimpleScore:
+                    if isValidNote(note):
+                        noteList.append(str(translate(note, baseChar, dictOfHalfStepFromBase)))
+                    else:
+                        print "Input ", note," is invalid"
+                        print "Input note should range between 1~7 with several u or d fellowing"
+                        print "u means up, d means down, only one of them should occur each time"
+                        sys.exit(1)
+                measureList.append(' '.join(noteList))
+            scoreLineList.append(measureList)
 
-        for note in noteListOfSimpleScore:
-            if isValidNote(note):
-                print translate(note, baseChar, dictOfHalfStepFromBase),
-            else:
-                print "Input ", note," is invalid"
-                print "Input note should range between 1~7 with several u or d fellowing"
-                print "u means up, d means down, only one of them should occur each time"
-                sys.exit(1)
+
+        from tabulate import tabulate
+        for eachGroup in mergeSimilarRow(scoreLineList):
+            print tabulate(eachGroup, tablefmt="fancy_grid")
     else:
         print "Invalid arguments"
         print "Usage: python music.x.py $1=C $2(simple score) $3(scale) $4(scoreFile or scoreString)"
