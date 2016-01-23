@@ -121,8 +121,6 @@ def mergeSimilarRow(measureLineList):
             group.append(measureLine)
             rowGroupList.append(group)
         else:
-            print "rowGroup", rowGroupList
-            print "measureLine", measureLine
             if len(rowGroupList[-1][0]) != len(measureLine):
                 group = list()
                 group.append(measureLine)
