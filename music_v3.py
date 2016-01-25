@@ -140,13 +140,15 @@ if __name__ == "__main__":
 
         scale = sys.argv[2]
         if not isValidScale(scale):
-            print 
-            """Scale should only be major, Nminor, Hminor, Mminor
-                You should use notation for each scale:
-                    "ma" : "major",
-                    "nm" : "Nminor",
-                    "hm" : "Hminor",
-                    "mm" : "Mminor" """
+            print \
+"""
+Scale should only be major, Nminor, Hminor, Mminor
+You should use notation for each scale:
+    "ma" : "major",
+    "nm" : "Nminor",
+    "hm" : "Hminor",
+    "mm" : "Mminor" 
+"""
             sys.exit(1)
 
         simpleScoreList = list()
